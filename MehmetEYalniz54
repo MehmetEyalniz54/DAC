@@ -1,0 +1,74 @@
+#include <aduc841.h>
+   
+	SAY2_L EQU 00H
+	SAY2_H EQU 01H
+	SAY1_L EQU 02H
+	SAY1_H EQU 03H
+	SONUC_BYTE_1 EQU 00H
+	SONUC_BYTE_2 EQU 01H
+	SONUC_BYTE_3 EQU 02H
+	SONUC_BYTE_4 EQU 03H
+		
+CSEG
+	ORG 0000h            
+    sjmp main
+	
+	main:
+	mov DACCON, #01111111B
+	mov DAC0H, #00H
+	mov DAC0L, #00H
+	
+	mov SAY1_H,#0AFH
+	mov SAY1_L,#0A0H
+	mov SAY2_H,#09H
+	mov SAY2_L,#0C4H
+	
+	push B
+	push dpl
+	mov a,r0
+	mov b,r2
+	mul ab
+	push acc
+	push b
+	mov a,r0
+	mov b,r3
+	mul ab
+	pop 00h
+	add a,r0
+	mov r0,a
+	clr a
+	addc a,b
+	mov dpl,a
+	mov a,r2
+	mov b,r1
+	mul ab
+	add a,r0
+	mov r0,a
+	mov a,dpl
+	addc a,b
+	mov dpl,a
+	clr a
+	addc a,#00h
+	push acc
+	mov a,r3
+	mov b,r1
+	mul ab
+	add a,dpl
+	mov r2,a
+	pop acc
+	addc a,b
+	mov r3,a
+	mov r1,#00h
+	pop 00h
+	pop dpl
+	pop B
+	
+	mov DAC0H,SONUC_BYTE_4
+	mov DAC0L,SONUC_BYTE_3
+	
+	bekle:
+		sjmp bekle
+	
+
+
+    END
